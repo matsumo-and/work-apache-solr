@@ -7,12 +7,9 @@ services:
     ports:
      - "8983:8983"
     volumes:
-     - data:/var/solr/data/
+     - ./data:/var/solr/data/
     environment:
       TZ: Asia/Tokyo
     # command:
     #   - solr-precreate
     #   - product
-
-volumes:
-  data:

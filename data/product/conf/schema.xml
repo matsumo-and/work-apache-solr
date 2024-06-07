@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+<!--
+
+ This example schema is the recommended starting point for users.
+ It should be kept correct and concise, usable out-of-the-box.
+
+
+ For more information, on how to customize this file, please see
+ https://solr.apache.org/guide/solr/latest/indexing-guide/schema-elements.html
+
+ PERFORMANCE NOTE: this schema includes many optional features and should not
+ be used for benchmarking.  To improve performance one could
+  - set stored="false" for all fields possible (esp large fields) when you
+    only need to search on the field but don't need to return the original
+    value.
+  - set indexed="false" if you don't need to search on the field, but only
+    return the field as a result of searching on other indexed fields.
+  - remove all unneeded copyField statements
+  - for best index size and searching performance, set "index" to false
+    for all general text fields, use copyField to copy them to the
+    catchall "text" field, and use that for searching.
+-->
+
+<schema name="default-config" version="1.6">
+    <!-- attribute "name" is the name of this schema and is only used for display purposes.
+       version="x.y" is Solr's version number for the schema syntax and
+       semantics.  It should not normally be changed by applications.
+
+       1.0: multiValued attribute did not exist, all fields are multiValued
+            by nature
+       1.1: multiValued attribute introduced, false by default
+       1.2: omitTermFreqAndPositions attribute introduced, true by default
+            except for text fields.
+       1.3: removed optional field compress feature
+       1.4: autoGeneratePhraseQueries attribute introduced to drive QueryParser
+            behavior when a single string produces multiple tokens.  Defaults
+            to off for version >= 1.4
+       1.5: omitNorms defaults to true for primitive field types
+            (int, float, boolean, string...)
+       1.6: useDocValuesAsStored defaults to true.
+    -->
+    <field name="partNumber" type="string" termPositions="true" termVectors="true" indexed="true" stored="true"/>
+    <field name="productType" type="string" termPositions="true" termVectors="true" indexed="false" stored="true"/>
+    <field name="category.code" type="string" termPositions="true" termVectors="true" indexed="false" stored="true"/>
+    <field name="brand.code" type="string" termPositions="true" termVectors="true" indexed="false" stored="true"/>
+    <field name="family.code" type="string" termPositions="true" termVectors="true" indexed="false" stored="true"/>
+    <field name="line.code" type="string" termPositions="true" termVectors="true" indexed="false" stored="true"/>
+    <field name="productSegment.code" type="string" termPositions="true" termVectors="true" indexed="false" stored="true"/>
+    <field name="status" type="string" termPositions="true" termVectors="true" indexed="false" stored="true"/>
+    <field name="value" type="string" termPositions="true" termVectors="true" indexed="false" stored="true"/>
+    <field name="valueCurrency" type="string" termPositions="true" termVectors="true" indexed="false" stored="true"/>
+    <field name="defaultQuantityUnits" type="string" termPositions="true" termVectors="true" indexed="false" stored="true"/>
+    <field name="name" type="string" termPositions="true" termVectors="true" indexed="false" stored="true"/>
+    <field name="description" type="string" termPositions="true" termVectors="true" indexed="false" stored="true"/>
+    <field name="plannerCode" type="string" termPositions="true" termVectors="true" indexed="false" stored="true"/>
+    <field name="sourceLink" type="string" termPositions="true" termVectors="true" indexed="false" stored="true"/>
+
+        <!-- The StrField type is not analyzed, but indexed/stored verbatim. -->
+    <fieldType name="string" class="solr.StrField" sortMissingLast="true" docValues="true" />
+    <fieldType name="strings" class="solr.StrField" sortMissingLast="true" multiValued="true" docValues="true" />
+
+    <!-- boolean type: "true" or "false" -->
+    <fieldType name="boolean" class="solr.BoolField" sortMissingLast="true"/>
+    <fieldType name="booleans" class="solr.BoolField" sortMissingLast="true" multiValued="true"/>
+
+    <!--
+        Numeric field types that index values using KD-trees.
+        Point fields don't support FieldCache, so they must have docValues="true" if needed for sorting, faceting, functions, etc.
+    -->
+    <fieldType name="pint" class="solr.IntPointField" docValues="true"/>
+    <fieldType name="pfloat" class="solr.FloatPointField" docValues="true"/>
+    <fieldType name="plong" class="solr.LongPointField" docValues="true"/>
+    <fieldType name="pdouble" class="solr.DoublePointField" docValues="true"/>
+
+    <fieldType name="pints" class="solr.IntPointField" docValues="true" multiValued="true"/>
+    <fieldType name="pfloats" class="solr.FloatPointField" docValues="true" multiValued="true"/>
+    <fieldType name="plongs" class="solr.LongPointField" docValues="true" multiValued="true"/>
+    <fieldType name="pdoubles" class="solr.DoublePointField" docValues="true" multiValued="true"/>
+    <fieldType name="random" class="solr.RandomSortField" indexed="true"/>
+
+</schema>
