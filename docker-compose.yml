@@ -1,0 +1,18 @@
+version: '3.8'
+services:
+  solr:
+    build:
+      context: ./solr
+      dockerfile: Dockerfile
+    ports:
+     - "8983:8983"
+    volumes:
+     - data:/var/solr/data/
+    environment:
+      TZ: Asia/Tokyo
+    # command:
+    #   - solr-precreate
+    #   - product
+
+volumes:
+  data:
