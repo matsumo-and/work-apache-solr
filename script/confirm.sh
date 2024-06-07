@@ -1,0 +1,2 @@
+curl -i -X GET \
+ 'http://localhost:8983/solr/product/select?fl=partNumber%2C%20productType%2C%20category.code%2C%20brand.code%2C%20family.code%2C%20line.code%2C%20status%2C%20value%2C%20valueCurrency%2C%20defaultQuantityUnits%2C%20name%2C%20description%2C%20plannerCode%2C%20sourceLink&indent=true&q.op=OR&q=*%3A*&rows=100&useParams'
