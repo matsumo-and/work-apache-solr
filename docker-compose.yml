@@ -10,6 +10,6 @@ services:
      - ./data:/var/solr/data/
     environment:
       TZ: Asia/Tokyo
-    # command:
-    #   - solr-precreate
-    #   - product
+    command:
+      - solr-precreate
+      - product

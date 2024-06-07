@@ -57,22 +57,46 @@
        1.6: useDocValuesAsStored defaults to true.
     -->
     <field name="partNumber" type="string" termPositions="true" termVectors="true" indexed="true" stored="true"/>
-    <field name="productType" type="string" termPositions="true" termVectors="true" indexed="false" stored="true"/>
-    <field name="category.code" type="string" termPositions="true" termVectors="true" indexed="false" stored="true"/>
-    <field name="brand.code" type="string" termPositions="true" termVectors="true" indexed="false" stored="true"/>
-    <field name="family.code" type="string" termPositions="true" termVectors="true" indexed="false" stored="true"/>
-    <field name="line.code" type="string" termPositions="true" termVectors="true" indexed="false" stored="true"/>
-    <field name="productSegment.code" type="string" termPositions="true" termVectors="true" indexed="false" stored="true"/>
-    <field name="status" type="string" termPositions="true" termVectors="true" indexed="false" stored="true"/>
-    <field name="value" type="string" termPositions="true" termVectors="true" indexed="false" stored="true"/>
-    <field name="valueCurrency" type="string" termPositions="true" termVectors="true" indexed="false" stored="true"/>
-    <field name="defaultQuantityUnits" type="string" termPositions="true" termVectors="true" indexed="false" stored="true"/>
-    <field name="name" type="string" termPositions="true" termVectors="true" indexed="false" stored="true"/>
-    <field name="description" type="string" termPositions="true" termVectors="true" indexed="false" stored="true"/>
-    <field name="plannerCode" type="string" termPositions="true" termVectors="true" indexed="false" stored="true"/>
-    <field name="sourceLink" type="string" termPositions="true" termVectors="true" indexed="false" stored="true"/>
+    <field name="productType" type="string" termPositions="true" termVectors="true" indexed="true" stored="true"/>
+    <field name="category.code" type="string" termPositions="true" termVectors="true" indexed="true" stored="true"/>
+    <field name="brand.code" type="string" termPositions="true" termVectors="true" indexed="true" stored="true"/>
+    <field name="family.code" type="string" termPositions="true" termVectors="true" indexed="true" stored="true"/>
+    <field name="line.code" type="string" termPositions="true" termVectors="true" indexed="true" stored="true"/>
+    <field name="productSegment.code" type="string" termPositions="true" termVectors="true" indexed="true" stored="true"/>
+    <field name="status" type="string" termPositions="true" termVectors="true" indexed="true" stored="true"/>
+    <field name="value" type="string" termPositions="true" termVectors="true" indexed="true" stored="true"/>
+    <field name="valueCurrency" type="string" termPositions="true" termVectors="true" indexed="true" stored="true"/>
+    <field name="defaultQuantityUnits" type="string" termPositions="true" termVectors="true" indexed="true" stored="true"/>
+    <field name="name" type="string" termPositions="true" termVectors="true" indexed="true" stored="true"/>
+    <field name="description" type="string" termPositions="true" termVectors="true" indexed="true" stored="true"/>
+    <field name="plannerCode" type="string" termPositions="true" termVectors="true" indexed="true" stored="true"/>
+    <field name="sourceLink" type="string" termPositions="true" termVectors="true" indexed="true" stored="true"/>
 
-        <!-- The StrField type is not analyzed, but indexed/stored verbatim. -->
+    <!-- In this _default configset, only four fields are pre-declared:
+      id, _version_, and _text_ and _root_. All other fields will be type guessed and added via the
+      "add-unknown-fields-to-the-schema" update request processor chain declared in solrconfig.xml.
+
+      Note that many dynamic fields are also defined - you can use them to specify a
+      field's type via field naming conventions - see below.
+
+      WARNING: The _text_ catch-all field will significantly increase your index size.
+      If you don't need it, consider removing it and the corresponding copyField directive.
+    -->
+
+    <field name="id" type="string" indexed="true" stored="true" required="true" multiValued="false" />
+    <!-- docValues are enabled by default for long type so we don't need to index the version field  -->
+    <field name="_version_" type="plong" indexed="false" stored="false"/>
+
+    <!-- If you don't use child/nested documents, then you should remove the next two fields:  -->
+    <!-- for nested documents (minimal; points to root document) -->
+    <field name="_root_" type="string" indexed="true" stored="false" docValues="false" />
+    <!-- for nested documents (relationship tracking) -->
+    <field name="_nest_path_" type="_nest_path_" /><fieldType name="_nest_path_" class="solr.NestPathField" />
+
+    <field name="_text_" type="text_general" indexed="true" stored="false" multiValued="true"/>
+
+
+    <!-- The StrField type is not analyzed, but indexed/stored verbatim. -->
     <fieldType name="string" class="solr.StrField" sortMissingLast="true" docValues="true" />
     <fieldType name="strings" class="solr.StrField" sortMissingLast="true" multiValued="true" docValues="true" />
 
@@ -94,5 +118,29 @@
     <fieldType name="plongs" class="solr.LongPointField" docValues="true" multiValued="true"/>
     <fieldType name="pdoubles" class="solr.DoublePointField" docValues="true" multiValued="true"/>
     <fieldType name="random" class="solr.RandomSortField" indexed="true"/>
+
+    <!-- A general text field that has reasonable, generic
+      cross-language defaults: it tokenizes with StandardTokenizer,
+      removes stop words from case-insensitive "stopwords.txt"
+      (empty by default), and down cases.  At query time only, it
+      also applies synonyms.
+    -->
+    <fieldType name="text_general" class="solr.TextField" positionIncrementGap="100" multiValued="true">
+      <analyzer type="index">
+        <tokenizer name="standard"/>
+        <filter name="stop" ignoreCase="true" words="stopwords.txt" />
+        <!-- in this example, we will only use synonyms at query time
+        <filter name="synonymGraph" synonyms="index_synonyms.txt" ignoreCase="true" expand="false"/>
+        <filter name="flattenGraph"/>
+        -->
+        <filter name="lowercase"/>
+      </analyzer>
+      <analyzer type="query">
+        <tokenizer name="standard"/>
+        <filter name="stop" ignoreCase="true" words="stopwords.txt" />
+        <filter name="synonymGraph" synonyms="synonyms.txt" ignoreCase="true" expand="true"/>
+        <filter name="lowercase"/>
+      </analyzer>
+    </fieldType>
 
 </schema>
